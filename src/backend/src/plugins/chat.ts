@@ -86,7 +86,7 @@ export class ChatService {
 
     // Add the previous messages to the prompt, as long as we don't exceed the token limit
     for (const historyMessage of messages.slice(0, -1).reverse()) {
-      if (messageBuilder.tokens > this.tokenLimit) break;
+      if (messageBuilder.tokens >= this.tokenLimit) break;
       messageBuilder.appendMessage(historyMessage.role, historyMessage.content);
     }
 
