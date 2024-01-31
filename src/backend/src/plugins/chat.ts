@@ -28,13 +28,24 @@ export class ChatService {
 
   async run(messages: Message[]): Promise<ChatResponse> {
 
-    // implement Retrieval Augmented Generation (RAG) here
+    // implement Retrieval Augmented Generation (RAG) here:
+
+    /**
+     * 1. Embedding Computation: Converts a user's prompt into an embedding for similarity comparisons.
+     */
+
     // Get the content of the last message (the question)
     const query = messages[messages.length - 1].content;
 
     // Compute an embedding for the query
     const embeddingsClient = this.embeddingsClient({ modelName: this.embeddingModel });
     const queryVector = await embeddingsClient.embedQuery(query);
+
+
+    /**
+     * 2. Document Retrieval: Finds the most relevant documents using the prompt's embedding. This is where systems like Azure AI Search come into play, allowing for efficient vector similarity searches.
+     */
+
     // Performs a vector search
     const searchResults = await this.qdrantClient.search(this.config.indexName, {
       vector: queryVector,
@@ -55,6 +66,10 @@ export class ChatService {
     });
     
     const content = results.join('\n');
+
+    /**
+     * 3. Contextual Augmentation: Enhances the user prompt with information from retrieved documents. This step is crucial as it provides additional context and information to the generator.
+     */
     
     // Set the context with the system message
     const systemMessage = SYSTEM_MESSAGE_PROMPT;
@@ -76,6 +91,11 @@ export class ChatService {
     // Processing details, for debugging purposes
     const conversation = messageBuilder.messages.map((m) => `${m.role}: ${m.content}`).join('\n\n');
     const thoughts = `Search query:\n${query}\n\nConversation:\n${conversation}`.replaceAll('\n', '<br>');
+
+
+    /**
+     * 4. Response Generation: Use the model to generate a response using the augmented prompt. The model uses the additional context provided by the retrieved documents to produce a more informed and accurate output.
+     */
 
     // generating the response
     const chatClient = this.chatClient({
