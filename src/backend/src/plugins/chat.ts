@@ -12,6 +12,8 @@ Each source has a name followed by colon and the actual information, always incl
 `;
 
 
+//https://moaw.dev/workshop/?src=gh%3Asinedied%2Fopenai-rag%2Fdocs%2Fworkshop-qdrant.md&vars=azpass%3Asnc240131%2Cproxy%3Ahttps%3A%2F%2Fopenai-proxy.nicesea-7b508ad5.swedencentral.azurecontainerapps.io&step=1#
+
 export class ChatService {
   tokenLimit: number = 4000;
 
